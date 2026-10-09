@@ -1,1 +1,167 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mathsax Explainer</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f6fc;
+      color: #172033;
+    }
+    header {
+      background: #101b35;
+      color: white;
+      padding: 28px 20px;
+    }
+    header h1 { margin-bottom: 8px; }
+    main {
+      max-width: 800px;
+      margin: auto;
+      padding: 18px;
+    }
+    section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 18px;
+      border-radius: 14px;
+      border: 1px solid #e1e7f0;
+    }
+    input, button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+    }
+    input { border: 1px solid #bac6d8; }
+    button {
+      border: none;
+      background: #245ce5;
+      color: white;
+      font-weight: bold;
+    }
+    .result {
+      margin-top: 15px;
+      padding: 14px;
+      background: #eff6ff;
+      border-radius: 8px;
+      overflow-wrap: anywhere;
+    }
+    .topic {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>∑ Mathsax Explainer</h1>
+    <p>Belajar matematika langkah demi langkah.</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Materi Matematika</h2>
+      <input id="search" placeholder="Cari materi..."
+        oninput="showTopics()">
+      <div id="topics"></div>
+    </section>
+
+    <section>
+      <h2>Math Solver</h2>
+      <p>Masukkan persamaan berbentuk ax + b = c.</p>
+      <p>Contoh: 2x+5=13</p>
+      <input id="equation" placeholder="2x+5=13">
+      <button onclick="solve()">Jelaskan langkahnya</button>
+      <div id="answer" aria-live="polite"></div>
+    </section>
+
+    <section>
+      <h2>Contoh Materi: Persamaan Linear</h2>
+      <p>Bentuk umum: ax + b = c, dengan a ≠ 0.</p>
+      <p>Contoh: 2x + 5 = 13</p>
+      <p>Langkah 1: 2x = 13 - 5 = 8</p>
+      <p>Langkah 2: x = 8 ÷ 2 = 4</p>
+      <p>Jadi, x = 4.</p>
+    </section>
+  </main>
+
+  <script>
+    const lessons = [
+      "Bilangan dan Aritmetika",
+      "Pecahan dan Persentase",
+      "Aljabar Dasar",
+      "Persamaan Linear",
+      "Persamaan Kuadrat",
+      "Fungsi dan Grafik",
+      "Geometri",
+      "Trigonometri",
+      "Eksponen dan Logaritma",
+      "Barisan dan Deret",
+      "Matriks dan Vektor",
+      "Statistika dan Peluang",
+      "Limit, Turunan, dan Integral"
+    ];
+
+    function showTopics() {
+      const q = document.getElementById("search")
+        .value.toLowerCase();
+      const found = lessons.filter(item =>
+        item.toLowerCase().includes(q)
+      );
+      document.getElementById("topics").innerHTML =
+        found.length
+          ? found.map(item =>
+              "<div class='topic'>" + item + "</div>"
+            ).join("")
+          : "<p>Materi tidak ditemukan.</p>";
+    }
+
+    function solve() {
+      const raw = document.getElementById("equation")
+        .value.replace(/\s+/g, "");
+      const match = raw.match(
+        /^([+-]?\d*\.?\d*)x([+-]\d+(?:\.\d+)?)?=([+-]?\d+(?:\.\d+)?)$/
+      );
+      const out = document.getElementById("answer");
+
+      if (!match) {
+        out.innerHTML =
+          "<div class='result'>Format belum didukung. " +
+          "Contoh: 2x+5=13</div>";
+        return;
+      }
+
+      const a = match[1] === "" || match[1] === "+"
+        ? 1 : match[1] === "-" ? -1 : Number(match[1]);
+      const b = match[2] ? Number(match[2]) : 0;
+      const c = Number(match[3]);
+
+      if (![a,b,c].every(Number.isFinite) || a === 0) {
+        out.innerHTML =
+          "<div class='result'>Persamaan tidak valid.</div>";
+        return;
+      }
+
+      const x = (c-b)/a;
+      out.innerHTML =
+        "<div class='result'>" +
+        "<b>Langkah 1:</b> Kurangi kedua ruas dengan " + b +
+        ".<br>" + a + "x = " + (c-b) +
+        "<br><br><b>Langkah 2:</b> Bagi kedua ruas dengan " + a +
+        ".<br><b>x = " + Number(x.toFixed(8)) +
+        "</b><br><br><b>Pemeriksaan:</b> " +
+        a + "(" + x + ") + (" + b + ") = " + (a*x+b) +
+        "</div>";
+    }
+
+    showTopics();
+  </script>
+</body>
+</html>
+
